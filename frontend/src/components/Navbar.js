@@ -10,7 +10,6 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     fontFamily: 'Pokemon Solid',
     color: "#22577A",
-    marginTop: theme.spacing(2),
   },
   AppBar: {
     background: "#FFCB05",
