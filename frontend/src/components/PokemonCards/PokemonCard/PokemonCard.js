@@ -1,36 +1,11 @@
 import React, { useState } from 'react';
 import {decode} from 'html-entities';
-import { makeStyles } from '@material-ui/core/styles';
 import {Card, CardActionArea, CardContent, CardMedia, Typography, List, ListItem, ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StatsIcon from '@material-ui/icons/Assignment';
+import useStyles from './styles';
 
-const useStyles = makeStyles({
-  root: {
-    maxWidth: 300,
-    borderColor: "#22577A",
-    borderWidth: "5px",
-  },
-  text: {
-    color: "#22577A"
-  },
-  media: {
-    height: 200,
-  },
-  less: {
-    color: "red",
-    fontWeight: 700,
-  },
-  more: {
-    color: "green",
-    fontWeight: 700,
-  },
-  same: {
-    color: "black",
-    fontWeight: 700,
-  },
-});
 
 export default function PokemonCard({pokemon, otherPokemon}) {
   const classes = useStyles();
