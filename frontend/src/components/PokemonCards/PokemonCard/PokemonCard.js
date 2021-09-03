@@ -1,23 +1,38 @@
 import React, { useState } from 'react';
 import {decode} from 'html-entities';
 import { makeStyles } from '@material-ui/core/styles';
-import {Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Typography, List, ListItem, ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
+import {Card, CardActionArea, CardContent, CardMedia, Typography, List, ListItem, ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StatsIcon from '@material-ui/icons/Assignment';
 
 const useStyles = makeStyles({
   root: {
-    maxWidth: 200,
+    maxWidth: 300,
     borderColor: "#22577A",
     borderWidth: "5px",
   },
+  text: {
+    color: "#22577A"
+  },
   media: {
-    height: 140,
+    height: 200,
+  },
+  less: {
+    color: "red",
+    fontWeight: 700,
+  },
+  more: {
+    color: "green",
+    fontWeight: 700,
+  },
+  same: {
+    color: "black",
+    fontWeight: 700,
   },
 });
 
-export default function PokemonCard() {
+export default function PokemonCard({pokemon, otherPokemon}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   function handleOpen() {
@@ -29,30 +44,43 @@ export default function PokemonCard() {
       <CardActionArea>
         <CardMedia
           className={classes.media}
-          image="https://cdn.ndtv.com/tech/images/gadgets/pikachu_hi_pokemon.jpg"
+          image={pokemon.image}
           title="Pokemon"
         />
       </CardActionArea>
       <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
-            Pikachu
+          <Typography gutterBottom variant="h5" className={classes.text} component="h2">
+            {pokemon.name}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {decode("While sleeping, it generates electricity in the sacs in its cheeks. If it\u2019s not getting enough sleep, it will be able to use only weak electricity.", {level: 'all'})}
+          <Typography variant="body2" className={classes.text} component="p">
+            {decode(pokemon.description, {level: 'all'})}
         </Typography>
         <List>
           <ListItem button onClick={handleOpen}>
             <ListItemIcon>
               <StatsIcon/>
             </ListItemIcon>
-            <ListItemText primary="Stats" />
+            <ListItemText className={classes.text} primary="Stats" />
             {open ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItem>
-                <ListItemText primary="Attack: 0" />
-              </ListItem>
+              {Object.entries(pokemon.base).map(([key, value]) => {
+                var color = classes.same;
+                if (value > otherPokemon.base[key]) {
+                  color = classes.more
+                }
+                else if (value < otherPokemon.base[key]) {
+                  color = classes.less
+                }
+                else {
+                  color = classes.same
+                }
+                return(
+                <ListItem>
+                    <ListItemText className={classes.text}>{key + ": "}<span className={color}>{value}</span></ListItemText>
+                </ListItem>)
+              })}
             </List>
           </Collapse>
         </List>
