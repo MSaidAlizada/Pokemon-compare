@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Pokemon Solid',
     color: "#22577A",
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(6)
+    marginBottom: theme.spacing(2)
   },
 }));
 

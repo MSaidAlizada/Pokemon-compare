@@ -1,56 +1,78 @@
-import React, {useState} from "react"
-import { Grid, Button} from "@material-ui/core";
+import React, { useState } from "react";
+import { useStyles } from "./styles";
+import { Grid, Button, Paper, Typography } from "@material-ui/core";
 import PokemonCard from "./PokemonCard/PokemonCard";
-import { fetchRandomPokemon, fetchPokemon, createPokemon } from "../../api/index";
+import { fetchRandomPokemon } from "../../api/index";
 
 const PokemonCards = () => {
-    const [buttonState, setButtonState] = useState({
-        started: false,
-        next: false,
-    })
+    const classes = useStyles();
+    const [started, setStarted] = useState(false)
     const [pokemon, setPokemon] = useState({
         pokemon1: {
-            name: "Pikachu",
-            image: "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/025.png",
-            description: "While sleeping, it generates electricity in the sacs in its cheeks. If it\u2019s not getting enough sleep, it will be able to use only weak electricity.",
+            name: "",
+            image: "",
+            description: "",
             base: {
-                "HP": 35,
-                "Attack": 55,
-                "Defense": 40,
-                "SpAttack": 50,
-                "SpDefense": 50,
-                "Speed": 90,
             },
         },
         pokemon2: {
-            name: "Squirtle",
-            image: "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/thumbnails/007.png",
-            description: "Squirtle\u2019s shell is not merely used for protection. The shell\u2019s rounded shape and the grooves on its surface help minimize resistance in water, enabling this Pok\u00e9mon to swim at high speeds.",
+            name: "",
+            image: "",
+            description: "",
             base: {
-                "HP": 44,
-                "Attack": 48,
-                "Defense": 65,
-                "SpAttack": 50,
-                "SpDefense": 64,
-                "Speed": 43
             },
         }
     })
     function handleClick() {
-        console.log(fetchPokemon(22).then((res)=>console.log(res.data)));
-        console.log(fetchRandomPokemon().then((res)=>console.log(res.data)));
+        if (!started) {
+            fetchRandomPokemon()
+                .then((res) => {
+                    const data = res.data;
+                    setPokemon((prevValue) => {
+                        return ({
+                            ...prevValue, pokemon1: {name: data.name.english, image: data.thumbnail, description: data.description, base: data.base},
+                        })
+                    })
+                })
+            fetchRandomPokemon()
+                .then((res) => {
+                    const data = res.data;
+                    setPokemon((prevValue) => {
+                        return ({
+                            ...prevValue, pokemon2: {name: data.name.english, image: data.thumbnail, description: data.description, base: data.base},
+                        })
+                    })
+                })
+            .catch((err)=>console.log(err))
+            setStarted(true);
+        }
     }
     return (
         <div>
-            <Button onClick={() => handleClick()} color="primary" variant="contained">{buttonState.started ? "Next" : "Start"}</Button>
-            {buttonState.started && <Grid container justifyContent="center">
-                <Grid item xs={3}>
-                    <PokemonCard pokemon={pokemon.pokemon1} otherPokemon={pokemon.pokemon2}/>
-                </Grid>
-                <Grid item xs={3}>
-                    <PokemonCard pokemon={pokemon.pokemon2} otherPokemon={pokemon.pokemon1}/>
-                </Grid>
-            </Grid>}
+            <Button onClick={() => handleClick()} color="primary" variant="contained" className={classes.btn}>{started ? "Next" : "Start"}</Button>
+            <Grid container justifyContent="center">
+                {started ?
+                <>
+                    <Grid item xs={3}>
+                        <PokemonCard pokemon={pokemon.pokemon1} otherPokemon={pokemon.pokemon2}/>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <PokemonCard pokemon={pokemon.pokemon2} otherPokemon={pokemon.pokemon1}/>
+                    </Grid>
+                </>
+                :
+                <Paper className={classes.Paper}>
+                    <Typography className={classes.text}>Poke 50/50</Typography>
+                        <Typography className={classes.text}>How to play:</Typography>
+                        <ol className={classes.text}>
+                            <li>Click start then compare the two pokemon you are given</li>
+                            <li>Once you decide which you like better click on its image</li>
+                            <li>You will be shown how many users passed and liked each pokemon</li>
+                            <li>Click next for you next set and ENJOY!!</li>
+                        </ol>
+                </Paper>
+                }   
+            </Grid> 
         </div>
      );
 }
