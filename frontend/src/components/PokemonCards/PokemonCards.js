@@ -1,8 +1,13 @@
 import React, {useState} from "react"
-import { Grid } from "@material-ui/core";
+import { Grid, Button} from "@material-ui/core";
 import PokemonCard from "./PokemonCard/PokemonCard";
+import { fetchRandomPokemon, fetchPokemon, createPokemon } from "../../api/index";
 
 const PokemonCards = () => {
+    const [buttonState, setButtonState] = useState({
+        started: false,
+        next: false,
+    })
     const [pokemon, setPokemon] = useState({
         pokemon1: {
             name: "Pikachu",
@@ -31,15 +36,22 @@ const PokemonCards = () => {
             },
         }
     })
+    function handleClick() {
+        console.log(fetchPokemon(22).then((res)=>console.log(res.data)));
+        console.log(fetchRandomPokemon().then((res)=>console.log(res.data)));
+    }
     return (
-        <Grid container justifyContent="center">
-            <Grid item xs={3}>
-                <PokemonCard pokemon={pokemon.pokemon1} otherPokemon={pokemon.pokemon2}/>
-            </Grid>
-            <Grid item xs={3}>
-                <PokemonCard pokemon={pokemon.pokemon2} otherPokemon={pokemon.pokemon1}/>
-            </Grid>
-        </Grid>
+        <div>
+            <Button onClick={() => handleClick()} color="primary" variant="contained">{buttonState.started ? "Next" : "Start"}</Button>
+            {buttonState.started && <Grid container justifyContent="center">
+                <Grid item xs={3}>
+                    <PokemonCard pokemon={pokemon.pokemon1} otherPokemon={pokemon.pokemon2}/>
+                </Grid>
+                <Grid item xs={3}>
+                    <PokemonCard pokemon={pokemon.pokemon2} otherPokemon={pokemon.pokemon1}/>
+                </Grid>
+            </Grid>}
+        </div>
      );
 }
  
