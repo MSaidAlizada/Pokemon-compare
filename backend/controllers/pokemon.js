@@ -21,3 +21,12 @@ export function createPokemon(req, res) {
     newPokemon.save();
     res.status(201).json(newPokemon);
 }
+
+export function updatePokemon(req, res) {
+    const id = req.body.pokemonId;
+    const upVotes = req.body.upVotes;
+    const downVotes = req.body.downVotes;
+    const newPokemon = new Pokemon({ pokemonId: id, upVotes: upVotes, downVotes: downVotes });
+    Pokemon.findOneAndUpdate({ pokemonId: id }, newPokemon, { new: true });
+    res.json(newPokemon);
+}

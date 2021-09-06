@@ -20,7 +20,14 @@ export default function PokemonCard({pokemon, otherPokemon}) {
           createPokemon(pokemon.id, 1, 0);
         }
       })
-      .catch((err) => console.loog(err));
+      .catch((err) => console.log(err));
+    fetchPokemon(otherPokemon.id)
+      .then((res) => {
+        if (res.data === null) {
+          createPokemon(otherPokemon.id, 0, 1);
+        }
+      })
+      .catch((err) => console.log(err));
   }
 
   return (
