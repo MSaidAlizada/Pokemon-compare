@@ -15,7 +15,9 @@ export function getPokemonById(req,res) {
 
 export function createPokemon(req, res) {
     const id = req.body.pokemonId;
-    const newPokemon = new Pokemon({ pokemonId: id, upVotes: 0, downVotes: 0 });
+    const upVotes = req.body.upVotes;
+    const downVotes = req.body.downVotes;
+    const newPokemon = new Pokemon({ pokemonId: id, upVotes: upVotes, downVotes: downVotes });
     newPokemon.save();
     res.status(201).json(newPokemon);
 }

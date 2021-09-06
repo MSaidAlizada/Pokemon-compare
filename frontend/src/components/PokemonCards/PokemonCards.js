@@ -9,6 +9,7 @@ const PokemonCards = () => {
     const [started, setStarted] = useState(false)
     const [pokemon, setPokemon] = useState({
         pokemon1: {
+            id: Number,
             name: "",
             image: "",
             description: "",
@@ -16,6 +17,7 @@ const PokemonCards = () => {
             },
         },
         pokemon2: {
+            id: Number,
             name: "",
             image: "",
             description: "",
@@ -30,7 +32,7 @@ const PokemonCards = () => {
                     const data = res.data;
                     setPokemon((prevValue) => {
                         return ({
-                            ...prevValue, pokemon1: {name: data.name.english, image: data.thumbnail, description: data.description, base: data.base},
+                            ...prevValue, pokemon1: {id: data.id, name: data.name.english, image: data.thumbnail, description: data.description, base: data.base},
                         })
                     })
                 })
@@ -39,7 +41,7 @@ const PokemonCards = () => {
                     const data = res.data;
                     setPokemon((prevValue) => {
                         return ({
-                            ...prevValue, pokemon2: {name: data.name.english, image: data.thumbnail, description: data.description, base: data.base},
+                            ...prevValue, pokemon2: {id: data.id, name: data.name.english, image: data.thumbnail, description: data.description, base: data.base},
                         })
                     })
                 })

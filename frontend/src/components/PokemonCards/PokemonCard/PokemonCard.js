@@ -5,7 +5,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StatsIcon from '@material-ui/icons/Assignment';
 import useStyles from './styles';
-
+import { createPokemon, fetchPokemon } from "../../../api/index";
 
 export default function PokemonCard({pokemon, otherPokemon}) {
   const classes = useStyles();
@@ -13,10 +13,19 @@ export default function PokemonCard({pokemon, otherPokemon}) {
   function handleOpen() {
     setOpen(!open)
   }
+  function handleClick() {
+    fetchPokemon(pokemon.id)
+      .then((res) => {
+        if (res.data === null) {
+          createPokemon(pokemon.id, 1, 0);
+        }
+      })
+      .catch((err) => console.loog(err));
+  }
 
   return (
     <Card className={classes.root} style={{backgroundColor: "#FFCB05"}} variant="outlined">
-      <CardActionArea>
+      <CardActionArea onClick={handleClick}>
         <CardMedia
           className={classes.media}
           image={pokemon.image}
