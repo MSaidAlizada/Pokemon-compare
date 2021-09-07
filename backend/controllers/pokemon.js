@@ -26,7 +26,10 @@ export function updatePokemon(req, res) {
     const id = req.body.pokemonId;
     const upVotes = req.body.upVotes;
     const downVotes = req.body.downVotes;
-    const newPokemon = new Pokemon({ pokemonId: id, upVotes: upVotes, downVotes: downVotes });
-    Pokemon.findOneAndUpdate({ pokemonId: id }, newPokemon, { new: true });
-    res.json(newPokemon);
+    Pokemon.findOneAndUpdate({ pokemonId: id }, { pokemonId: id, upVotes: upVotes, downVotes: downVotes }, { new: true }, (err) => {
+        if (err) {
+            console.log(err);
+        }
+    });
+    res.json({ pokemonId: id, upVotes: upVotes, downVotes: downVotes });
 }

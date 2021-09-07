@@ -5,7 +5,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StatsIcon from '@material-ui/icons/Assignment';
 import useStyles from './styles';
-import { createPokemon, fetchPokemon } from "../../../api/index";
+import { createPokemon, fetchPokemon, updatePokemon } from "../../../api/index";
 
 export default function PokemonCard({pokemon, otherPokemon}) {
   const classes = useStyles();
@@ -19,12 +19,18 @@ export default function PokemonCard({pokemon, otherPokemon}) {
         if (res.data === null) {
           createPokemon(pokemon.id, 1, 0);
         }
+        else {
+          updatePokemon(pokemon.id, res.data.upVotes + 1, res.data.downVotes);
+        }
       })
       .catch((err) => console.log(err));
     fetchPokemon(otherPokemon.id)
       .then((res) => {
         if (res.data === null) {
           createPokemon(otherPokemon.id, 0, 1);
+        }
+        else {
+          updatePokemon(otherPokemon.id, res.data.upVotes, res.data.downVotes + 1);
         }
       })
       .catch((err) => console.log(err));
