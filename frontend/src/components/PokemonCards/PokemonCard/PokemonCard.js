@@ -7,7 +7,19 @@ import StatsIcon from '@material-ui/icons/Assignment';
 import useStyles from './styles';
 import { createPokemon, fetchPokemon, updatePokemon } from "../../../api/index";
 
-export default function PokemonCard({pokemon, otherPokemon}) {
+function GetPokemon(pokemon) {
+    fetchPokemon(pokemon.pokemon.id)
+      .then((res) => {
+        console.log(res)
+        return (
+        <>
+          <Typography>Passes: {res.data.downVotes}</Typography>
+          <Typography>Passes: {res.data.downVotes}</Typography>
+        </>)
+      })
+  }
+
+export default function PokemonCard({pokemon, otherPokemon, next, setButtonState}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   function handleOpen() {
@@ -34,10 +46,15 @@ export default function PokemonCard({pokemon, otherPokemon}) {
         }
       })
       .catch((err) => console.log(err));
+    setButtonState({ started: true, next: true });
   }
-
   return (
     <Card className={classes.root} style={{backgroundColor: "#FFCB05"}} variant="outlined">
+      {next ?
+        <CardContent>
+          <GetPokemon pokemon={pokemon}/>
+      </CardContent>
+      :
       <CardActionArea onClick={handleClick}>
         <CardMedia
           className={classes.media}
@@ -45,6 +62,7 @@ export default function PokemonCard({pokemon, otherPokemon}) {
           title="Pokemon"
         />
       </CardActionArea>
+      }
       <CardContent>
           <Typography gutterBottom variant="h5" className={classes.text} component="h2">
             {pokemon.name}

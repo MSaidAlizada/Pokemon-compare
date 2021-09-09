@@ -6,7 +6,7 @@ import { fetchRandomPokemon } from "../../api/index";
 
 const PokemonCards = () => {
     const classes = useStyles();
-    const [started, setStarted] = useState(false)
+    const [buttonState, setButtonState] = useState({ started: false, next: false });
     const [pokemon, setPokemon] = useState({
         pokemon1: {
             id: Number,
@@ -15,6 +15,7 @@ const PokemonCards = () => {
             description: "",
             base: {
             },
+            won: false,
         },
         pokemon2: {
             id: Number,
@@ -23,10 +24,11 @@ const PokemonCards = () => {
             description: "",
             base: {
             },
+            won: false,
         }
     })
     function handleClick() {
-        if (!started) {
+        if (!buttonState.started) {
             fetchRandomPokemon()
                 .then((res) => {
                     const data = res.data;
@@ -46,20 +48,39 @@ const PokemonCards = () => {
                     })
                 })
             .catch((err)=>console.log(err))
-            setStarted(true);
+            setButtonState({ started: true, next: false });
+        }
+        else if (buttonState.next) {
+            setButtonState({ started: true, next: false })
+            fetchRandomPokemon()
+                .then((res) => {
+                    const data = res.data;
+                    var pokeToKeep = "pokemon1";
+                    if (pokemon.pokemon1.won === true) {
+                        pokeToKeep = "pokemon1";
+                    }
+                    else {
+                        pokeToKeep = "pokemon2";
+                    }
+                    setPokemon((prevValue) => {
+                        return({pokemon1: {id: data.id, name: data.name.english, image: data.thumbnail, description: data.description, base: data.base, won: false , upVotes:0, downVotes: 0},pokemon2: {
+                            ...prevValue[pokeToKeep], won:false, upVotes:0, downVotes: 0
+                        }})
+                    })
+                })
         }
     }
     return (
         <div>
-            <Button onClick={() => handleClick()} color="primary" variant="contained" className={classes.btn}>{started ? "Next" : "Start"}</Button>
+            <Button onClick={() => handleClick("","")} color="primary" variant="contained" className={classes.btn}>{buttonState.started ? "Next" : "Start"}</Button>
             <Grid container justifyContent="center">
-                {started ?
+                {buttonState.started ?
                 <>
                     <Grid item xs={3}>
-                        <PokemonCard pokemon={pokemon.pokemon1} otherPokemon={pokemon.pokemon2}/>
+                        <PokemonCard pokemon={pokemon.pokemon1} otherPokemon={pokemon.pokemon2} next={buttonState.next} setButtonState={setButtonState} setPokemon={setPokemon}/>
                     </Grid>
                     <Grid item xs={3}>
-                        <PokemonCard pokemon={pokemon.pokemon2} otherPokemon={pokemon.pokemon1}/>
+                        <PokemonCard pokemon={pokemon.pokemon2} otherPokemon={pokemon.pokemon1} next={buttonState.next} setButtonState={setButtonState} setPokemon={setPokemon}/>
                     </Grid>
                 </>
                 :
