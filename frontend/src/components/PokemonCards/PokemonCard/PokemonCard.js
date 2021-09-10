@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {decode} from 'html-entities';
 import {Card, CardActionArea, CardContent, CardMedia, Typography, List, ListItem, ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -7,52 +7,47 @@ import StatsIcon from '@material-ui/icons/Assignment';
 import useStyles from './styles';
 import { createPokemon, fetchPokemon, updatePokemon } from "../../../api/index";
 
-function GetPokemon(pokemon) {
-    fetchPokemon(pokemon.pokemon.id)
-      .then((res) => {
-        console.log(res)
-        return (
-        <>
-          <Typography>Passes: {res.data.downVotes}</Typography>
-          <Typography>Passes: {res.data.downVotes}</Typography>
-        </>)
-      })
-  }
-
 export default function PokemonCard({pokemon, otherPokemon, next, setButtonState}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [upDown, setUpDown] = useState({up:0, down: 0})
+  useEffect(() => {
+    if (next === true) {
+      fetchPokemon(pokemon.id)
+        .then((res) => {
+          setUpDown({up: res.data.upVotes, down: res.data.downVotes})
+        })
+        .catch((err) => console.log(err))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [next])
+
   function handleOpen() {
     setOpen(!open)
   }
-  function handleClick() {
-    fetchPokemon(pokemon.id)
-      .then((res) => {
-        if (res.data === null) {
-          createPokemon(pokemon.id, 1, 0);
-        }
-        else {
-          updatePokemon(pokemon.id, res.data.upVotes + 1, res.data.downVotes);
-        }
-      })
-      .catch((err) => console.log(err));
-    fetchPokemon(otherPokemon.id)
-      .then((res) => {
-        if (res.data === null) {
-          createPokemon(otherPokemon.id, 0, 1);
-        }
-        else {
-          updatePokemon(otherPokemon.id, res.data.upVotes, res.data.downVotes + 1);
-        }
-      })
-      .catch((err) => console.log(err));
-    setButtonState({ started: true, next: true });
+  async function handleClick() {
+    let res = await fetchPokemon(pokemon.id)
+    if (res.data === null) {
+      await createPokemon(pokemon.id, 1, 0);
+    }
+    else {
+      await updatePokemon(pokemon.id, res.data.upVotes + 1, res.data.downVotes);
+    }
+    res = await fetchPokemon(otherPokemon.id)
+    if (res.data === null) {
+      await createPokemon(otherPokemon.id, 0, 1);
+    }
+    else {
+      await updatePokemon(otherPokemon.id, res.data.upVotes, res.data.downVotes + 1);
+    }
+    await setButtonState({ started: true, next: true });
   }
   return (
     <Card className={classes.root} style={{backgroundColor: "#FFCB05"}} variant="outlined">
       {next ?
         <CardContent>
-          <GetPokemon pokemon={pokemon}/>
+          <Typography>Passes: {upDown.up}</Typography>
+          <Typography>Fails: {upDown.down}</Typography>
       </CardContent>
       :
       <CardActionArea onClick={handleClick}>
