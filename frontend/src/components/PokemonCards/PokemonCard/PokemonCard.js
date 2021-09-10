@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {decode} from 'html-entities';
+import { decode } from 'html-entities';
+import { Pie } from 'react-chartjs-2';
 import {Card, CardActionArea, CardContent, CardMedia, Typography, List, ListItem, ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -7,7 +8,7 @@ import StatsIcon from '@material-ui/icons/Assignment';
 import useStyles from './styles';
 import { createPokemon, fetchPokemon, updatePokemon } from "../../../api/index";
 
-export default function PokemonCard({pokemon, otherPokemon, next, setButtonState}) {
+export default function PokemonCard({pokemon, otherPokemon, next, setButtonState, setPokemon}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [upDown, setUpDown] = useState({up:0, down: 0})
@@ -40,14 +41,39 @@ export default function PokemonCard({pokemon, otherPokemon, next, setButtonState
     else {
       await updatePokemon(otherPokemon.id, res.data.upVotes, res.data.downVotes + 1);
     }
+    await setPokemon((prevValue) => {
+      if (pokemon.id === prevValue.pokemon1.id) {
+        return({...prevValue, pokemon1:{...prevValue.pokemon1, won:true}})
+      }
+      else {
+        return({...prevValue, pokemon2:{...prevValue.pokemon2, won:true}})
+      }
+    })
     await setButtonState({ started: true, next: true });
   }
+  const data = {
+  labels: ["Passes","Fails"],
+  datasets: [
+    {
+      label: '# of Votes',
+      data: [upDown.up, upDown.down],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(75, 192, 192, 1)',
+      ],
+      borderWidth: 1,
+    },
+  ],
+};
   return (
     <Card className={classes.root} style={{backgroundColor: "#FFCB05"}} variant="outlined">
       {next ?
         <CardContent>
-          <Typography>Passes: {upDown.up}</Typography>
-          <Typography>Fails: {upDown.down}</Typography>
+          <Pie data={{labels: ["Passes","Fails"],datasets: [{label: '# of Votes',data: [upDown.up, upDown.down],backgroundColor: ['rgba(75, 192, 192, 0.2)','rgba(255, 99, 132, 0.2)',],borderColor: ['rgba(75, 192, 192, 1)','rgba(255, 99, 132, 1)',],borderWidth: 1,},],}}/>
       </CardContent>
       :
       <CardActionArea onClick={handleClick}>
